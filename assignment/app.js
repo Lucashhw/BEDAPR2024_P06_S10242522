@@ -1,26 +1,19 @@
 const express = require("express");
-const booksController = require("./controllers/booksController");
-const sql = require("mssql");
+const feedbacksController = require("./controllers/feedbacksController");
+const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
 
 const app = express();
 const port = process.env.PORT || 3000; // Use environment variable or default port
-
-// Include body-parser middleware to handle JSON data
+const staticMiddleware = express.static("public"); // Path to the public folder
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
 
-app.get("/books", booksController.getAllBooks);
-app.get("/books/:id", booksController.getBookById);
-app.post("/books", booksController.createBook); // POST for creating books (can handle JSON data)
-app.put("/books/:id", booksController.updateBook); // PUT for updating books
-app.delete("/books/:id", booksController.deleteBook); // DELETE for deleting books
+app.use(staticMiddleware); // Mount the static middleware
 
-// Routes for GET requests (replace with appropriate routes for update and delete later)
-app.get("/books", booksController.getAllBooks);
-app.get("/books/:id", booksController.getBookById);
-
+app.get("/feedbacks", feedbacksController.getAllFeedbacks);
+app.get("/feedbacks/:id", feedbacksController.getFeedbackById);
 app.listen(port, async () => {
   try {
     // Connect to the database
@@ -43,3 +36,5 @@ process.on("SIGINT", async () => {
   console.log("Database connection closed");
   process.exit(0); // Exit with code 0 indicating successful shutdown
 });
+
+
