@@ -11,7 +11,7 @@ class Feedback {
   static async getAllFeedbacks() {
     const connection = await sql.connect(dbConfig);
 
-    const sqlQuery = `SELECT * FROM Feedbacks`; // Replace with your actual table name
+    const sqlQuery = `SELECT * FROM Feedbacks`; 
 
     const request = connection.request();
     const result = await request.query(sqlQuery);
@@ -26,7 +26,7 @@ class Feedback {
   static async getFeedbackById(id) {
     const connection = await sql.connect(dbConfig);
 
-    const sqlQuery = `SELECT * FROM Feedbacks WHERE id = @id`; // Parameterized query
+    const sqlQuery = `SELECT * FROM Feedbacks WHERE id = @id`; 
 
     const request = connection.request();
     request.input("id", id);
@@ -42,6 +42,55 @@ class Feedback {
         )
       : null; // Handle feedback not found
   }
+
+  static async createFeedback(newFeedbackData) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `INSERT INTO Feedbacks (rating, comments) VALUES (@rating, @comments); SELECT SCOPE_IDENTITY() AS id;`; // Retrieve ID of inserted record
+
+    const request = connection.request();
+    request.input("rating", newFeedbackData.rating);
+    request.input("comments", newFeedbackData.comments);
+
+    const result = await request.query(sqlQuery);
+
+    connection.close();
+
+    // Retrieve the newly created book using its ID
+    return this.getFeedbackById(result.recordset[0].id);
+  }
+
+  static async updateFeedback(id, newFeedbackData) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `UPDATE Feedbacks SET rating = @rating, comments = @comments WHERE id = @id`; // Parameterized query
+
+    const request = connection.request();
+    request.input("id", id);
+    request.input("rating", newFeedbackData.rating || null); // Handle optional fields
+    request.input("comments", newFeedbackData.comments || null);
+
+    await request.query(sqlQuery);
+
+    connection.close();
+
+    return this.getFeedbackById(id); // returning the updated book data
+  }
+
+  static async deleteFeedback(id) {
+    const connection = await sql.connect(dbConfig);
+
+    const sqlQuery = `DELETE FROM Feedbacks WHERE id = @id`; // Parameterized query
+
+    const request = connection.request();
+    request.input("id", id);
+    const result = await request.query(sqlQuery);
+
+    connection.close();
+
+    return result.rowsAffected > 0; // Indicate success based on affected rows
+  }
 }
 
 module.exports = Feedback;
+

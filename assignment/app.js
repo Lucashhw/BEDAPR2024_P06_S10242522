@@ -3,6 +3,7 @@ const feedbacksController = require("./controllers/feedbacksController");
 const sql = require("mssql"); // Assuming you've installed mssql
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
+const validateFeedback = require("./middlewares/validateFeedback");
 
 const app = express();
 const port = process.env.PORT || 3000; // Use environment variable or default port
@@ -14,6 +15,9 @@ app.use(staticMiddleware); // Mount the static middleware
 
 app.get("/feedbacks", feedbacksController.getAllFeedbacks);
 app.get("/feedbacks/:id", feedbacksController.getFeedbackById);
+app.post("/feedbacks", validateFeedback, feedbacksController.createFeedback);
+//app.put("/feedbacks/:id", feedbacksController.updateFeedback); 
+app.delete("/feedbacks/:id", feedbacksController.deleteFeedback); 
 app.listen(port, async () => {
   try {
     // Connect to the database
@@ -36,5 +40,6 @@ process.on("SIGINT", async () => {
   console.log("Database connection closed");
   process.exit(0); // Exit with code 0 indicating successful shutdown
 });
+
 
 

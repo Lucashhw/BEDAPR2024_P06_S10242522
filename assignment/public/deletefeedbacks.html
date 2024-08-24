@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Feedback</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+    <h1>Delete Feedback</h1>
+    <button onclick="location.href='index.html'">Home</button>
+    <form id="delete-feedback-form">
+        <label for="feedback-id">Enter Feedback ID:</label>
+        <input type="number" id="feedback-id" name="feedback-id" required>
+        <button type="submit">Delete Feedback</button>
+    </form>
+
+    <script src="scripts/deletefeedbacks.js"></script>
+
+    <script>
+        document.getElementById("delete-feedback-form").addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            const feedbackId = document.getElementById("feedback-id").value;
+            deleteFeedbackById(feedbackId);
+        });
+    </script>
+</body>
+</html>
